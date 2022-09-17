@@ -59,6 +59,7 @@ int main()
     {
         result=result^valuea[i];//异或和计算
     }
+    
     cout<<result;
     return 0;
 }
