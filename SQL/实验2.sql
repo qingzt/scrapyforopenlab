@@ -8,3 +8,4 @@ from pub.student,pub.student_course
 where pub.student.sid=pub.student_course.sid)
 
 2-2
+6666666
