@@ -35,6 +35,10 @@ class arrayList : public linearList<T>
       void insert(int theIndex, const T& theElement);
       void output(ostream& out) const;
       void push_back(const T& theElement);
+      void pop_back();
+      void reserve(int theCapacity);
+      void clear();
+
 
       // additional method
       int capacity() const {return arrayLength;}
@@ -166,6 +170,32 @@ void arrayList<T>::push_back(const T& theElement)
    listSize++;
 }
 
+template<class T>
+void arrayList<T>::pop_back()
+{
+   element[listSize].~T();
+   listSize--;
+}
+
+template<class T>
+void arrayList<T>::reserve(int theCapacity)
+{
+   if(theCapacity>arrayLength)
+   {
+      changeLength1D(element,arrayLength,theCapacity);
+      arrayLength=theCapacity;
+   }
+}
+
+template<class T>
+void arrayList<T>::clear()
+{
+   for(int i=0;i<listSize;i++)
+   {
+      element[i]=NULL;
+   }
+   listSize=0;
+}
 
 
 #endif
