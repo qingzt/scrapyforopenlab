@@ -14,6 +14,6 @@ int main()
     a.reserve(11);
     cout<<a.capacity()<<endl;
     a.clear();
-    cout<<a<<endl;
+    cout<<a.empty()<<endl;
     return 0;
 }
