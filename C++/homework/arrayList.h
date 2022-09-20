@@ -171,7 +171,7 @@ void arrayList<T>::push_back(const T& theElement)
 }
 
 template<class T>
-void arrayList<T>::pop_back()
+void arrayList<T>::pop_back()//时间复杂度O(1)
 {
    element[listSize].~T();
    listSize--;
@@ -188,7 +188,7 @@ void arrayList<T>::reserve(int theCapacity)
 }
 
 template<class T>
-void arrayList<T>::clear()
+void arrayList<T>::clear()//时间复杂度O(n)
 {
    for(int i=0;i<listSize;i++)
    {
