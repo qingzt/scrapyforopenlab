@@ -1,2 +1,4 @@
 .vscode
 C++/output
+.SynchroniDir_1.lock
+.gitignore
