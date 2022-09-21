@@ -25,9 +25,6 @@ void fullarrange(int a[],int current,int lenth)
             a[i]=a[current];
             a[current]=temp;//进行交换
             fullarrange(a,current+1,lenth);//进入递归
-            //temp=a[i];
-            //a[i]=a[current];
-            //a[current]=temp;//交换回来
         }
     }
 }
