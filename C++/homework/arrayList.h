@@ -159,7 +159,7 @@ ostream& operator<<(ostream& out, const arrayList<T>& x)
    {x.output(out); return out;}
 
 template<class T>
-void arrayList<T>::push_back(const T& theElement)
+void arrayList<T>::push_back(const T& theElement)//时间复杂度取决于changeLength1D，为O(n)
 {
    if(arrayLength==listSize)
    {
@@ -178,7 +178,7 @@ void arrayList<T>::pop_back()//时间复杂度O(1)
 }
 
 template<class T>
-void arrayList<T>::reserve(int theCapacity)
+void arrayList<T>::reserve(int theCapacity)//时间复杂度取决于changeLength1D，为O(n)
 {
    if(theCapacity>arrayLength)
    {
