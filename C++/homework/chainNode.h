@@ -2,7 +2,7 @@
 
 #ifndef chainNode_
 #define chainNode_
-
+using namespace std;
 template <class T>
 struct chainNode 
 {
