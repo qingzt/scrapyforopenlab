@@ -93,3 +93,50 @@ or cid not in (
     select cid
     from pub.teacher_course
 )
+
+3-9
+select score
+from test3_09
+group by score
+
+delete from test3_09
+where score<0
+or score>100
+
+3-10
+delete
+from test3_10
+where tid not in(
+    select tid
+    from pub.teacher_course
+    where pub.teacher_course.tid=test3_10.tid
+    and pub.teacher_course.cid=test3_10.cid
+)
+or cid not in(
+    select cid
+    from pub.teacher_course
+    where pub.teacher_course.tid=test3_10.tid
+    and pub.teacher_course.cid=test3_10.cid
+)
+or tid not in(
+    select tid
+    from pub.teacher_course
+)
+or cid not in (
+    select cid
+    from pub.teacher_course
+)
+or score<0
+or score>100
+or sid not in(
+    select sid
+    from pub.student
+)
+or cid not in (
+    select cid
+    from pub.course
+)
+or tid not in (
+    select tid
+    from pub.teacher
+)
