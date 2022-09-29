@@ -2,7 +2,7 @@
 using namespace std;
 
 template<class T>
-class sort
+class sort//模板类
 {
     private:
         T *a=NULL;
@@ -18,7 +18,7 @@ class sort
 };
 
 template<>
-class sort<int>
+class sort<int>//特化
 {
     private:
         int *a=NULL;
@@ -34,7 +34,7 @@ class sort<int>
 };
 
 
-void sort<int>::input()
+void sort<int>::input()//输入
 {
     cin>>n;
     a=new int[n];
@@ -44,7 +44,7 @@ void sort<int>::input()
     }
 }
 
-void sort<int>::output()
+void sort<int>::output()//输出
 {
     for(int i=0;i<n;i++)
     {
@@ -52,13 +52,13 @@ void sort<int>::output()
     }
 }
 
-void sort<int>::rank()
+void sort<int>::rank()//名次排序
 {
     int r[n];
     for(int i=0;i<n;i++)
     {
         r[i]=0;
-    }
+    }//初始化
     for(int i=1;i<n;i++)
     {
         for(int p=0;p<i;p++)
@@ -68,19 +68,19 @@ void sort<int>::rank()
             else
                 r[p]++;
         }
-    }
+    }//取得名次
     int s[n];
     for(int i=0;i<n;i++)
     {
         s[r[i]]=a[i];
-    }
+    }//附加数组排序
     for(int i=0;i<n;i++)
     {
         a[i]=s[i];
-    }
+    }//回到原数组
 }
 
-void sort<int>::select()
+void sort<int>::select()//选择排序
 {
     bool sorted=false;
     for(int i=n;!sorted&&(i>1);i--)
@@ -95,14 +95,14 @@ void sort<int>::select()
             }
             else
                 sorted=false;
-        }
+        }//找到最大的索引
         int temp=a[i-1];
         a[i-1]=a[mindex];
-        a[mindex]=temp;
+        a[mindex]=temp;//与当前交换
     }
 }
 
-void sort<int>::bubble()
+void sort<int>::bubble()//冒泡排序
 {
     bool sorted=false;
     for(int i=n;i>1&&(!sorted);i--)
@@ -121,7 +121,7 @@ void sort<int>::bubble()
     }
 }
 
-void sort<int>::insert()
+void sort<int>::insert()//插入排序
 {
     for(int i=1;i<n;i++)
     {
@@ -135,7 +135,7 @@ void sort<int>::insert()
                     a[q+1]=a[q];
                 }
                 a[p]=temp;
-            }
+            }//选择位置插入
         }
     }
 }
