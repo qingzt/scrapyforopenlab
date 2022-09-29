@@ -12,13 +12,14 @@ class linearlist{
 		linearlist(int n){stu= new student[n];zs=n;length=0;};
 		void insert(string xm1,string dh1,int bj1,int ss1);
 		void del(string xm1);//删除 
-		void change(string xm1, int a,int b);
+		void change(string xm1, int a,string b);
 		int search(string xm1);
 		int yihuo(int bj1);
+		
 	private:
 		student *stu;
 		int zs;//学生总数 
-		int length=0;//数组元素个数，即插入时用到的序号 
+		int length;//数组元素个数，即插入时用到的序号 
 };
 
 void linearlist::insert(string xm1,string dh1,int bj1,int ss1){
@@ -27,22 +28,23 @@ void linearlist::insert(string xm1,string dh1,int bj1,int ss1){
 void linearlist::del(string xm1){
 	for (int i = 0; i < zs; i++) {
 		if (stu[i].xm==xm1) {
-			copy(stu+i+1,stu+zs,stu+i);
+			copy(stu+i+1,stu+zs-1,stu+i);
 			length--;}//表示现在长度已经-1，插入时尾序号-1 
 	}
 }
 
-void linearlist::change(string xm1, int a,int b) {
+void linearlist::change(string xm1, int a,string b) {
 	for (int i = 0; i < length; i++) {
 		if (stu[i].xm==xm1) {
 			switch(a){
 				case 1:stu[i].dh=b;break;
-				case 2:stu[i].bj=b;break;
-				case 3:stu[i].ss=b;break;
+				case 2:stu[i].bj=stoi(b);break;
+				case 3:stu[i].ss=stoi(b);break;
 			}
 		}
 	}
 }
+
 
 int linearlist::search(string xm1){
 	for (int i = 0; i < length; i++) {
@@ -61,20 +63,24 @@ int linearlist::yihuo(int bj1){
 int main()
 {
 int n,m,bj1,ss1;//指令数，每次输入的数字，待输入的班级和宿舍 
-string xm1,dh1;
-int bb;//用于change函数的第三个参数 
+string xm1;
+string dh1;
+string bb;//用于change函数的第三个参数 
 int aa;//用于change函数的第二个参数 
+
+int js=0; 
 cin>>n; 
 linearlist list(n);
 /*cin>>xm1>>dh1>>bj1>>ss1;
 list.insert(xm1,dh1,bj1,ss1);*/
+int cun[n];
+for(int i=0;i<n;i++) cun[i]=0;
 for(int k=0;k<n;k++)
 {
 	cin>>m;
 	switch(m){
 		case 0:{
 			cin>> xm1 >> dh1 >> bj1 >> ss1;
-			cout<<"case1"<<endl;
 			list.insert(xm1,dh1,bj1,ss1);
 			break;
 		}
@@ -90,17 +96,24 @@ for(int k=0;k<n;k++)
 		}
 		case 3:{
 			cin>>xm1;
-			cout<<list.search(xm1)<<endl;
+			cun[js]=list.search(xm1);
+			js++;
 			break;
 		}
 		case 4:{
 			cin>>bj1;
-			cout<<list.yihuo(bj1)<<endl;
+			if(list.yihuo(bj1)!=0)
+			cun[js]=1;
+			else cun[js]=0;
+			js++;
+			//cun[js]=list.yihuo(xm1);
 			break;
 		}
 	}
 }
 
+for(int i=0;i<js-1;i++) cout<<cun[i]<<endl;
+cout<<cun[js];
 
 return 0;
 }
