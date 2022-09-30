@@ -276,9 +276,26 @@ where score>=60
 group by score
 
 5-10
-select trunc(score,-1),avg(score)
-from pub.student_course natural join pub.course
-where name='数据结构'
-and score>=60
+Create or replace view test5_10 as
+select c.cid,name cname,(
+    case trunc(score,-1) 
+        when 60 then '60-69'
+        when 70 then '70-79'
+        when 80 then '80-89'
+        ELSE '90-99'
+        END
+)as score,count(*) as count1,(
+    select count(*)
+    from pub.student_course sc
+    where sc.cid=c.cid
+    and score>=60
+    and score<=99
+) as count0,round(count(*)*100/(select count(*)
+    from pub.student_course sc
+    where sc.cid=c.cid
+    and score>=60
+    and score<=99),2) as percentage 
+from pub.student_course scc join pub.course c on scc.cid=c.cid 
+where score>=60
 and score<=99
-group by trunc(score,-1)
+group by trunc(score,-1),name,c.cid
