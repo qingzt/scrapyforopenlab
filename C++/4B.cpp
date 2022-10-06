@@ -175,70 +175,142 @@ class chain//链表类
 
 int main()
 {
-    int n,q;
-    cin>>n;
-    cin>>q;//输入操作数
-    int out[q];//存储输出
-    int p=0;
-    int start;
-    cin>>start;//使用第一个元素初始化链表
-    chain a(start);
-    for(int i=0;i<n-1;i++)
+    int n,m;
+    cin>>n>>m;
+    int a[n],b[m];//暂时存入输入的数字
+    for(int i=0;i<n;i++)
     {
-        int temp;
-        cin>>temp;
-        a.insert(i+1,temp);
-    }//形成链表
-    for(int i=0;i<q;i++)
+        cin>>a[i];
+    }
+    for(int i=1;i<n;i++)
     {
-        int op;
-        cin>>op;//输入操作数
-        if(op==1)
+        for(int p=0;p<i;p++)
         {
-            int index,theelement;
-            cin>>index>>theelement;
-            a.insert(index,theelement);
-        } 
-        if(op==2)
-        {
-            int theelement;
-            cin>>theelement;
-            int res;
-            res=a.erase(theelement);
-            if(res==-1)
+            if(a[i]<a[p])
             {
-                out[p]=res;
-                p++;
+                int temp=a[i];
+                for(int q=i-1;q>=p;q--)
+                {
+                    a[q+1]=a[q];
+                }
+                a[p]=temp;
             }
         }
-        if(op==3)
-        {
-            a.reseve();
-        }
-        if(op==4)
-        {
-            int theelement;
-            cin>>theelement;
-            out[p]=a.research(theelement);
-            p++;
-        }
-        if(op==5)
-        {
-            out[p]=a.yihuo();
-            p++;
-        }
-/*        miterator t(a.first());
-        for(int k=0;k<a.size();k++) 
-        {
-           cout<<*t<<" ";
-           t++;
-        }
-        cout<<endl;*/
-        
-    }
-    for(int i=0;i<p;i++)
+    }//将数字排序
+    chain a1(a[0]);
+    for(int i=0;i<n-1;i++)
     {
-        cout<<out[i]<<endl;
-    }//输出结果
+        a1.insert(i+1,a[i+1]);
+    }//形成链表
+    for(int i=0;i<m;i++)
+    {
+        cin>>b[i];
+    }
+    for(int i=1;i<m;i++)
+    {
+        for(int p=0;p<i;p++)
+        {
+            if(b[i]<b[p])
+            {
+                int temp=b[i];
+                for(int q=i-1;q>=p;q--)
+                {
+                    b[q+1]=b[q];
+                }
+                b[p]=temp;
+            }
+        }
+    }
+    chain b1(b[0]);
+    for(int i=0;i<m-1;i++)
+    {
+        b1.insert(i+1,b[i+1]);
+    }//形成链表
+    miterator at(a1.first());
+    miterator bt(b1.first());//定义迭代器
+    chain c;//链表c用于存储合并后的链表
+    if(n==0&&m!=0)//当a的长度为0时
+    {
+        for(int i=0;i<m;i++)
+        {
+            c.insert(i,*bt);
+            bt++;
+        }//c即为b
+    }
+    if(m==0&&n!=0)//当b的长度为0时
+    {
+        for(int i=0;i<n;i++)
+        {
+            c.insert(i,*at);
+            at++;
+        }//c即为a
+    }
+    if(n!=0&&m!=0)//均不为0时
+    {
+        int ac=0,bc=0,sym=0,j=0;//ac表示已经并入c的a的个数，bc表示已经并入c的b的个数，sym表示a或b已经全部添加，j表示c中已并入的个数
+        int sum=a1.size()+b1.size();//sum为c的长度
+        while(j<sum)
+        {
+            int aa=*at,bb=*bt;//aa表示a当前的元素，bb表示b当前的元素
+            if(aa<bb)
+            {
+                c.insert(j,*at);
+                ac++;
+                at++;
+            }//将a的元素并入c
+            if(bb<=aa)
+            {
+                c.insert(j,*bt);
+                bc++;
+                bt++;
+            }//将b的元素并入c
+            j++;//c中元素个数+1
+            if(ac==a1.size())//检测a是否已经全部并入
+            {
+                sym=1;
+                break;
+            }
+            if(bc==b1.size())//检测b是否已经全部并入
+            {
+                sym=2;
+                break;
+            }
+        }
+        if(sym==1)//a已经全部并入
+        {
+            while(j<sum)//将b剩余的插入
+            {
+                c.insert(j,*bt);
+                bt++;
+                j++;
+            }
+        }
+        if(sym==2)//b已经全部并入
+        {
+            while(j<sum)//将a剩余的插入
+            {
+                c.insert(j,*at);
+                at++;
+                j++;
+            }
+        }
+    }
+    if(n!=0)
+    {
+        cout<<a1.yihuo()<<endl;
+    }
+    else
+    {
+        cout<<0<<endl;
+    }
+    if(m!=0)
+    {
+        cout<<b1.yihuo()<<endl;
+    }
+    else
+    {
+        cout<<0<<endl;
+    }
+    cout<<c.yihuo();//输出异或和
     return 0;
 }
