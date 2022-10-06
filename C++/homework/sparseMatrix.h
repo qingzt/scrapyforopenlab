@@ -159,6 +159,37 @@ void sparseMatrix<T>::transpose(sparseMatrix<T> &b)
    }
 }
 
+
+template <class T>
+T get(int row, int col)
+{
+   for(int i=0;i<terms.size();i++)
+   {
+      if(row==terms[i].row && col==terms[i].col)
+      {
+         return term[i].value;
+      }
+   }
+}
+
+template<class T>
+void set(int row, int col, T value)
+{
+   for(int i=0;i<terms.size();i++)
+   {
+      if(row>terms[i].row && col>terms[i].col)
+      {
+         copy(terms[i],terms.size(),terms[i+1])
+         terms.listSize++;
+         terms[i].row = row; terms[i].col = col;
+         terms[i].value = value;
+
+      }
+   }
+}
+
+
+
 template<class T>
 void sparseMatrix<T>::add(sparseMatrix<T> &b, sparseMatrix<T> &c)
 {// Compute c = (*this) + b.
