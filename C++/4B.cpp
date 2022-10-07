@@ -126,7 +126,7 @@ class chain//链表类
             return -1;//未找到要删除的元素
             }
         }
-        void reseve()//转置
+        void reseve()//转为倒序
         {
             chainNode *bef=NULL,*ptr=head,*aft=ptr->next;
             for (int i = 0;i<ListSize-1; i++)//遍历直至倒数第二个
