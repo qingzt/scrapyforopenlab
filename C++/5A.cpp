@@ -34,6 +34,7 @@ class sparseMatrix
         elem gettheterm(int q){return terms[q];}//返回第q个非0元素
         void reserve();//矩阵转置
         int multiply();//矩阵乘法
+        int multplus();//修改版矩阵乘法
 };
 
 void sparseMatrix::set(int row, int col)
@@ -285,6 +286,63 @@ int sparseMatrix::multiply()
     }
 }
 
+int sparseMatrix::multplus()
+{
+    int newrows,newcols,t;
+    cin>>newrows>>newcols;
+    sparseMatrix Q(newrows,newcols);
+    cin>>t;
+    for(int i=0;i<t;i++)
+    {
+        elem temp;
+        cin>>temp.row>>temp.col>>temp.value;
+        Q.push(temp);
+    }//输入另一个矩阵
+    if(cols!=newrows)//矩阵不相容
+    {
+        this->terms=Q.getterms();
+        this->cols=Q.getcols();
+        this->rows=Q.getrows();
+        return -1;
+    }
+    else if(terms.size()!=0&&Q.getterms().size()!=0)//矩阵相容，并且当前矩阵非全0
+    {
+        sparseMatrix R(rows,newcols);
+        vector<elem> RE;
+        int psize=terms.size(),qsize=Q.getterms().size();
+        for(int i=0;i<psize;i++)
+        {
+            for(int j=0;j<qsize;j++)
+            {
+                elem pelem=terms[i];
+                elem qelem=Q.gettheterm(j);
+                if(pelem.col==qelem.row)
+                {
+                    int in=0;
+                    for(int r=0;r<RE.size();r++)
+                    {
+                        if(RE[r].row==pelem.row&&RE[r].col==qelem.col)
+                        {
+                            RE[r].value=pelem.value*qelem.value+RE[r].value;
+                            in=1;
+                            break;
+                        }
+                    }
+                    if(in==0)
+                    {
+                        elem temp;
+                        temp.row=terms[i].row;
+                        temp.col=Q.gettheterm(j).col;
+                        temp.value=terms[i].value*Q.gettheterm(j).value;
+                        RE.push_back(temp);
+                    }
+                }
+            }
+        }
+        cols=newcols;
+        terms=RE;
+    }
+}
 
 
 int main()
