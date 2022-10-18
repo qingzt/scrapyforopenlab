@@ -2,3 +2,4 @@
 output
 .SynchroniDir_1.lock
 .gitignore
+*.json
