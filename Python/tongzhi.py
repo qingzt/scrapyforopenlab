@@ -4,7 +4,6 @@ import urllib.request
 import datetime
 import pymysql
 
-# //*[@id="line_u7_0"]/div[2]/a
 
 url = "https://www.bkjx.sdu.edu.cn/sanji_list.jsp?urltype=tree.TreeTempUrl&wbtreeid=1010"
 
