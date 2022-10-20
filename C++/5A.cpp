@@ -328,14 +328,6 @@ int sparseMatrix::multplus()
                             break;
                         }
                     }
-                    if(in==0)
-                    {
-                        elem temp;
-                        temp.row=terms[i].row;
-                        temp.col=Q.gettheterm(j).col;
-                        temp.value=terms[i].value*Q.gettheterm(j).value;
-                        RE.push_back(temp);
-                    }
                 }
             }
         }
