@@ -8,7 +8,7 @@ import re
 #https://api.bilibili.com/x/relation/stat?vmid=214482102&jsonp=jsonp
 
 
-def getjson(uid):
+def getjson(uid):  #获得关注列表的json文件
     headers = {
         'accept': '*/*',
         'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
@@ -25,29 +25,31 @@ def getjson(uid):
         'sec-ch-ua-platform': '"Windows"',
         'referer':
         'https://space.bilibili.com/' + uid + '/fans/follow?tagid=-1'
-    }
+    }  #请求头
     followurl = 'https://api.bilibili.com/x/relation/followings?vmid=' + uid + '&pn=1&ps=50&order=desc&jsonp=jsonp&callback=__jp3'
     requset = urllib.request.Request(url=followurl, headers=headers)
     response = urllib.request.urlopen(requset)
     content = response.read().decode("utf-8")
     content = content[6:-1]
     with open(uid + 'A.json', 'w', encoding='utf-8') as fp:
-        fp.write(content)
+        fp.write(content)  #得到关注列表A
     followurl = 'https://api.bilibili.com/x/relation/followings?vmid=' + uid + '&pn=2&ps=50&order=desc&jsonp=jsonp&callback=__jp3'
     requset = urllib.request.Request(url=followurl, headers=headers)
     response = urllib.request.urlopen(requset)
     content = response.read().decode("utf-8")
     content = content[6:-1]
     with open(uid + 'B.json', 'w', encoding='utf-8') as fp:
-        fp.write(content)
+        fp.write(content)  #得到关注列表B
 
 
-def getfollowuid(uid):
+def getfollowuid(uid):  #获得关注的人的UID
     obj = json.load(open(uid + 'A.json', 'r', encoding='utf-8'))
     followlist = jsonpath.jsonpath(obj, '$..mid')
-    obj = json.load(open(uid + 'B.json', 'r', encoding='utf-8'))
+    obj = json.load(open(uid + 'B.json', 'r',
+                         encoding='utf-8'))  #转换为jsonpath对象
     if jsonpath.jsonpath(obj, '$..mid'):
-        followlist = followlist + jsonpath.jsonpath(obj, '$..mid')
+        followlist = followlist + jsonpath.jsonpath(
+            obj, '$..mid')  #提取uid插入followlist中
     db = pymysql.connect(host="127.0.0.1",
                          user="root",
                          password="wssb",
@@ -58,23 +60,23 @@ def getfollowuid(uid):
         cursor.execute("insert into Bili" + uid + " values(" +
                        str(followlist[no]) + ')')
     db.commit()
-    db.close()
+    db.close()  #将followlist插入数据库
 
 
-def tong(uidA, uidB):
+def tong(uidA, uidB):  #获取A和B的共同关注
     selectSQL = '(select uid from Bili' + uidA + ') intersect (select * from Bili' + uidB + ')'
     db = pymysql.connect(host="127.0.0.1",
                          user="root",
                          password="wssb",
                          database="Bili")
     with db.cursor() as cursor:
-        cursor.execute(selectSQL)
+        cursor.execute(selectSQL)  #用select获取共同关注
         uidt = cursor.fetchall()
     db.close()
-    return uidt
+    return uidt  #返回结果列表
 
 
-def getinfor(uid):
+def getinfor(uid):  #获取当前uid的信息
     headers = {
         'accept': '*/*',
         'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
@@ -94,40 +96,42 @@ def getinfor(uid):
     inforurl = 'https://api.bilibili.com/x/space/acc/info?mid=' + uid + '&token=&platform=web&jsonp=jsonp'
     requset = urllib.request.Request(url=inforurl, headers=headers)
     response = urllib.request.urlopen(requset)
-    contentinfor = response.read().decode("utf-8")
+    contentinfor = response.read().decode("utf-8")  #获取个人信息文件
     fansurl = 'https://api.bilibili.com/x/relation/stat?vmid=' + uid + '&jsonp=jsonp'
     requset = urllib.request.Request(url=fansurl, headers=headers)
     response = urllib.request.urlopen(requset)
-    contentfans = response.read().decode("utf-8")
+    contentfans = response.read().decode("utf-8")  #获取粉丝量文件
     infor = [uid]
-    pattern = re.compile('name":"(.*?)","sex')
+    pattern = re.compile('name":"(.*?)","sex')  #正则表达式匹配昵称
     infor.append(pattern.findall(contentinfor)[0])
-    pattern = re.compile('level":(.*?),"jointime')
+    pattern = re.compile('level":(.*?),"jointime')  #正则表达式匹配等级
     infor.append(pattern.findall(contentinfor)[0])
-    pattern = re.compile('follower":(.*?)}')
+    pattern = re.compile('follower":(.*?)}')  #正则表达式匹配粉丝量
     infor.append(pattern.findall(contentfans)[0])
-    return infor
+    return infor  #将相关信息加入列表后返回列表
 
 
-def addto(uidt, uidA, uidB):
+def addto(uidt, uidA, uidB):  #将uidt中的uid的信息加入数据库
+    tablename = 'tong' + uidA + 'and' + uidB
     createSQL = 'create table tong' + uidA + 'and' + uidB + '(uid varchar(200),name varchar(20),level int,fans int)'
     db = pymysql.connect(host="127.0.0.1",
                          user="root",
                          password="wssb",
                          database="Bili")
     course = db.cursor()
-    course.execute(createSQL)
+    course.execute(createSQL)  #建表
     for no in range(0, len(uidt)):
         infor = getinfor(uidt[no][0])
-        insertSQL = 'insert into tong values("' + infor[0] + '","' + infor[
-            1] + '",' + infor[2] + ',' + infor[3] + ')'
+        insertSQL = 'insert into ' + tablename + ' values("' + infor[
+            0] + '","' + infor[1] + '",' + infor[2] + ',' + infor[3] + ')'
         course.execute(insertSQL)
-        sleep(1)
+        sleep(1)  #插入
     db.commit()
-    course.execute('select * from tong')
+    course.execute('select * from ' + tablename)  #从数据库中获得输出
     for dept in course.fetchall():
-        print(dept)
+        print(dept)  #打印输出
     db.close()
+    print('tong' + uidA + 'and' + uidB)  #打印表名
 
 
 def chachengfen(uidA, uidB):

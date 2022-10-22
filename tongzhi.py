@@ -3,8 +3,7 @@ import urllib
 import urllib.request
 import datetime
 import pymysql
-
-
+import time
 url = "https://www.bkjx.sdu.edu.cn/sanji_list.jsp?urltype=tree.TreeTempUrl&wbtreeid=1010"
 
 headers = {
@@ -20,36 +19,45 @@ headers = {
     'sec-fetch-site': 'same-site',
     'sec-ch-ua-platform': '"Windows"',
 }
-request = urllib.request.Request(url=url, headers=headers)
-response = urllib.request.urlopen(request)
-content = response.read().decode('utf-8')
-tree = etree.HTML(content)
+repeat=int(input('设置定时请输入1，否则输入0'))
+if repeat==1:
+    settime=int(input('请输入定时时间，以秒为单位'))
+start=1
+while start:
+    request = urllib.request.Request(url=url, headers=headers)  #制作请求头
+    response = urllib.request.urlopen(request)  #获取相应
+    content = response.read().decode('utf-8')  #获取源码
+    tree = etree.HTML(content)  #转化为xpath对象
 
-titlelist = tree.xpath('//div[@id="div_more_news"]/div/div/a/@title')
-urllist = tree.xpath('//div[@id="div_more_news"]/div/div/a/@href')
-datelist = tree.xpath('//div[@id="div_more_news"]/div/div[3]/text()')
+    titlelist = tree.xpath('//div[@id="div_more_news"]/div/div/a/@title')  #名称列表
+    urllist = tree.xpath('//div[@id="div_more_news"]/div/div/a/@href')  #链接列表
+    datelist = tree.xpath('//div[@id="div_more_news"]/div/div[3]/text()')  #日期列表
 
-table_name = 'tongzhi' + str(datetime.datetime.now()).replace(' ', '').replace(
-    '-', '').replace(':', '').replace('.', '')[:14]
-createSQL = 'create table ' + table_name + ' select * from tongzhi'
+    table_name = 'tongzhi' + str(datetime.datetime.now()).replace(' ', '').replace(
+        '-', '').replace(':', '').replace('.', '')[:14]  #表名
+    createSQL = 'create table ' + table_name + ' select * from tongzhi where 1=2'  #创建表SQL语句
 
-print(table_name)
+    db = pymysql.connect(host="127.0.0.1",
+                        user="root",
+                        password="wssb",
+                        database="tongzhi")  #链接到数据库
+    cursor = db.cursor()  #游标
+    cursor.execute(createSQL)  #执行建表语句
+    for i in range(0, len(urllist)):
+        insertSQL = 'insert into ' + table_name + ' values("https://www.bkjx.sdu.edu.cn/' + urllist[
+            i] + '","' + titlelist[i] + '","' + datelist[i] + '")'  #插入的SQL
 
-db = pymysql.connect(host="127.0.0.1",
-                     user="root",
-                     password="wssb",
-                     database="tongzhi")
-cursor = db.cursor()
-cursor.execute(createSQL)
-for i in range(0, len(urllist)):
-    insertSQL = 'insert into ' + table_name + ' values("https://www.bkjx.sdu.edu.cn/' + urllist[
-        i] + '","' + titlelist[i] + '","' + datelist[i] + '")'
+        cursor.execute(insertSQL)  #执行插入语句
+    db.commit()  #提交到数据库
 
-    cursor.execute(insertSQL)
-db.commit()
-
-with db.cursor() as cursor:
-    cursor.execute('select * from ' + table_name)
-    for dept in cursor.fetchall():
-        print(dept)
-db.close()
+    with db.cursor() as cursor:
+        cursor.execute('select * from ' + table_name)
+        for dept in cursor.fetchall():
+            print(dept)  #输出
+        cursor.execute('insert into tongzhi select * from '+ table_name+' where title not in (select title from tongzhi)')#去重
+        cursor.execute('drop table ' + table_name)
+    db.close()  #关闭连接
+    if repeat==1:
+        time.sleep(settime)#设置定时
+    else:
+        start=0
