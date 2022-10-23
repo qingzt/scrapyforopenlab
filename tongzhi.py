@@ -55,8 +55,10 @@ while start:
         for dept in cursor.fetchall():
             print(dept)  #输出
         cursor.execute('insert into tongzhi select * from '+ table_name+' where title not in (select title from tongzhi)')#去重
-        cursor.execute('drop table ' + table_name)
+        #cursor.execute('drop table ' + table_name)
+    db.commit()
     db.close()  #关闭连接
+    print(table_name)
     if repeat==1:
         time.sleep(settime)#设置定时
     else:

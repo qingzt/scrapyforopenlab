@@ -73,7 +73,7 @@ while start:
         every.append(answer_num)
         every.append(upvote_num)  #将相关信息加入every
         infor_list.append(every)  #将every加入infor
-    newcloud=' '.join(wordcloud)
+    newcloud=' '.join(wordcloud)#将列表转为用空格分隔的字符串
     table_name = 'zhihu' + str(datetime.datetime.now()).replace(' ', '').replace(
         '-', '').replace(':', '').replace('.', '')[:14]  #建表的表名
     createSQL = 'create table ' + table_name + ' select * from zhihu'  #建表语句
